@@ -1,26 +1,57 @@
-// Página de login — estilo shadcn/ui SaaS.
+// Página de login — con validación inline y mensajes de error claros.
 
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../store/authStore";
-import { Wallet, Eye, EyeOff } from "lucide-react";
+import { Wallet, Eye, EyeOff, AlertCircle } from "lucide-react";
 import toast from "react-hot-toast";
+import axios from "axios";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState("");
   const { login, isLoading } = useAuthStore();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError("");
+
+    // Validaciones frontend antes de enviar
+    if (!email.trim()) {
+      setError("Ingresa tu correo electrónico");
+      return;
+    }
+    if (!password) {
+      setError("Ingresa tu contraseña");
+      return;
+    }
+
     try {
       await login(email, password);
       toast.success("¡Bienvenido de vuelta!");
       navigate("/dashboard");
-    } catch {
-      toast.error("Email o contraseña incorrectos");
+    } catch (err: unknown) {
+      // Extraer el mensaje específico del backend
+      if (axios.isAxiosError(err)) {
+        const status = err.response?.status;
+        const message = err.response?.data?.message;
+
+        if (status === 401) {
+          setError(message || "Email o contraseña incorrectos. Verifica tus datos e intenta de nuevo.");
+        } else if (status === 400) {
+          setError(message || "Datos inválidos. Revisa el formato de tu email.");
+        } else if (!err.response) {
+          // Error de red: backend no responde
+          setError("No se puede conectar al servidor. Intenta de nuevo en unos segundos.");
+        } else {
+          setError(message || "Error inesperado. Intenta de nuevo.");
+        }
+      } else {
+        setError("Error de conexión. Verifica tu internet e intenta de nuevo.");
+      }
     }
   };
 
@@ -45,6 +76,14 @@ export default function LoginPage() {
           onSubmit={handleSubmit}
           className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 shadow-sm p-6 space-y-4"
         >
+          {/* Error message inline */}
+          {error && (
+            <div className="flex items-start gap-2 p-3 rounded-md bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800">
+              <AlertCircle className="w-4 h-4 text-red-500 dark:text-red-400 mt-0.5 shrink-0" />
+              <p className="text-sm text-red-700 dark:text-red-400">{error}</p>
+            </div>
+          )}
+
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
               Correo electrónico
@@ -52,8 +91,12 @@ export default function LoginPage() {
             <input
               type="email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                setError("");
+              }}
               required
+              autoComplete="email"
               className="w-full px-3 py-2 text-sm rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-900 dark:focus:ring-gray-300 focus:border-transparent transition-shadow"
               placeholder="tu@email.com"
             />
@@ -67,11 +110,14 @@ export default function LoginPage() {
               <input
                 type={showPassword ? "text" : "password"}
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  setError("");
+                }}
                 required
-                minLength={6}
+                autoComplete="current-password"
                 className="w-full px-3 py-2 text-sm rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-900 dark:focus:ring-gray-300 focus:border-transparent transition-shadow pr-10"
-                placeholder="Mínimo 6 caracteres"
+                placeholder="Tu contraseña"
               />
               <button
                 type="button"

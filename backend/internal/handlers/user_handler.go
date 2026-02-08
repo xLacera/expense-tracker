@@ -68,3 +68,20 @@ func (h *UserHandler) UpdateSettings(c *gin.Context) {
 		IncludeSavingsInTotal: *req.IncludeSavingsInTotal,
 	})
 }
+
+// DeleteAccount elimina la cuenta del usuario autenticado (DELETE /api/user/account).
+func (h *UserHandler) DeleteAccount(c *gin.Context) {
+	userID, _ := c.Get("user_id")
+	if userID == nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "no_autorizado", "message": "Token requerido"})
+		return
+	}
+
+	err := h.userRepo.Delete(c.Request.Context(), userID.(string))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "error_eliminando", "message": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Cuenta eliminada"})
+}

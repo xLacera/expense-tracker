@@ -94,6 +94,7 @@ func Setup(pool *pgxpool.Pool, jwtSecret string, corsOrigin string, resendAPIKey
 		{
 			user.GET("/settings", userHandler.GetSettings)
 			user.PATCH("/settings", userHandler.UpdateSettings)
+			user.DELETE("/account", userHandler.DeleteAccount)
 		}
 
 		// Categorías

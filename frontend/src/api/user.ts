@@ -17,4 +17,8 @@ export const userAPI = {
     );
     return data;
   },
+
+  deleteAccount: async (): Promise<void> => {
+    await client.delete("/user/account");
+  },
 };

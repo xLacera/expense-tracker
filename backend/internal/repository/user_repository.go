@@ -96,3 +96,12 @@ func (r *UserRepository) UpdateIncludeSavingsInTotal(ctx context.Context, userID
 	}
 	return nil
 }
+
+// Delete elimina un usuario por ID. Las tablas con FK a users (ON DELETE CASCADE) se limpian solas.
+func (r *UserRepository) Delete(ctx context.Context, userID string) error {
+	_, err := r.pool.Exec(ctx, `DELETE FROM users WHERE id = $1`, userID)
+	if err != nil {
+		return fmt.Errorf("error eliminando usuario: %w", err)
+	}
+	return nil
+}

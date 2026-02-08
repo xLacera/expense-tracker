@@ -202,9 +202,10 @@ export default function ReportsPage() {
                     cx="50%"
                     cy="50%"
                     outerRadius={75}
-                    label={(props: Record<string, unknown>) =>
-                      `${props.category_name} ${((Number(props.percent) || 0) * 100).toFixed(0)}%`
-                    }
+                    label={(props) => {
+                      const p = props as Record<string, unknown>;
+                      return `${p.category_name} ${((Number(p.percent) || 0) * 100).toFixed(0)}%`;
+                    }}
                   >
                     {expenseByCategory.map((entry, index) => (
                       <Cell
@@ -261,9 +262,10 @@ export default function ReportsPage() {
                     cx="50%"
                     cy="50%"
                     outerRadius={75}
-                    label={(props: Record<string, unknown>) =>
-                      `${props.category_name} ${((Number(props.percent) || 0) * 100).toFixed(0)}%`
-                    }
+                    label={(props) => {
+                      const p = props as Record<string, unknown>;
+                      return `${p.category_name} ${((Number(p.percent) || 0) * 100).toFixed(0)}%`;
+                    }}
                   >
                     {incomeByCategory.map((entry, index) => (
                       <Cell

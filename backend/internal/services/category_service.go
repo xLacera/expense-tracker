@@ -30,6 +30,10 @@ var defaultCats = []struct {
 	{"Regalos", "#f43f5e", "regalos", "expense"},
 	{"Comunicaciones", "#6366f1", "comunicaciones", "expense"},
 	{"Suscripciones", "#7c3aed", "suscripciones", "expense"},
+	{"Mascotas", "#eab308", "mascotas", "expense"},
+	{"Ocio", "#14b8a6", "ocio", "expense"},
+	{"Maquillaje", "#f472b6", "maquillaje", "expense"},
+	{"Skincare", "#a78bfa", "skincare", "expense"},
 	{"Salario", "#22c55e", "salario", "income"},
 	{"Depósito", "#0ea5e9", "deposito", "income"},
 }
@@ -42,13 +46,21 @@ func NewCategoryService(categoryRepo *repository.CategoryRepository) *CategorySe
 	return &CategoryService{categoryRepo: categoryRepo}
 }
 
+// íconos de las categorías nuevas que queremos asegurar para todos (incluso usuarios existentes)
+var newDefaultIcons = map[string]struct{ Name, Color string }{
+	"mascotas":  {"Mascotas", "#eab308"},
+	"ocio":      {"Ocio", "#14b8a6"},
+	"maquillaje": {"Maquillaje", "#f472b6"},
+	"skincare":  {"Skincare", "#a78bfa"},
+}
+
 func (s *CategoryService) GetAll(ctx context.Context, userID string) ([]models.Category, error) {
 	categories, err := s.categoryRepo.GetAllByUser(ctx, userID)
 	if err != nil {
 		return nil, err
 	}
 
-	// Si el usuario no tiene categorías, crear las predeterminadas automáticamente
+	// Si el usuario no tiene categorías, crear todas las predeterminadas
 	if len(categories) == 0 {
 		log.Printf("Usuario %s sin categorías, creando predeterminadas...", userID)
 		for _, cat := range defaultCats {
@@ -58,6 +70,23 @@ func (s *CategoryService) GetAll(ctx context.Context, userID string) ([]models.C
 				continue
 			}
 			categories = append(categories, *created)
+		}
+	} else {
+		// Usuario existente: asegurar que tenga las categorías nuevas (Mascotas, Ocio, Maquillaje, Skincare)
+		hasIcon := make(map[string]bool)
+		for _, c := range categories {
+			hasIcon[c.Icon] = true
+		}
+		for icon, info := range newDefaultIcons {
+			if !hasIcon[icon] {
+				created, err := s.categoryRepo.Create(ctx, userID, info.Name, info.Color, icon, "expense")
+				if err != nil {
+					log.Printf("Error creando categoría '%s' para usuario existente: %v", info.Name, err)
+					continue
+				}
+				categories = append(categories, *created)
+				hasIcon[icon] = true
+			}
 		}
 	}
 

@@ -203,7 +203,7 @@ export default function ReportsPage() {
                     cy="50%"
                     outerRadius={75}
                     label={(props) => {
-                      const p = props as Record<string, unknown>;
+                      const p = props as unknown as Record<string, unknown>;
                       return `${p.category_name} ${((Number(p.percent) || 0) * 100).toFixed(0)}%`;
                     }}
                   >
@@ -263,7 +263,7 @@ export default function ReportsPage() {
                     cy="50%"
                     outerRadius={75}
                     label={(props) => {
-                      const p = props as Record<string, unknown>;
+                      const p = props as unknown as Record<string, unknown>;
                       return `${p.category_name} ${((Number(p.percent) || 0) * 100).toFixed(0)}%`;
                     }}
                   >

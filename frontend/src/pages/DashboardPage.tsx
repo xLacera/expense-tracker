@@ -71,7 +71,7 @@ export default function DashboardPage() {
       {/* Tarjetas de resumen */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {/* Ingresos */}
-        <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 p-5">
+        <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 p-4 sm:p-5">
           <div className="flex items-center justify-between mb-3">
             <span className="text-sm font-medium text-gray-500 dark:text-gray-400">
               Ingresos
@@ -80,13 +80,13 @@ export default function DashboardPage() {
               <TrendingUp className="w-4 h-4 text-green-600 dark:text-green-400" />
             </div>
           </div>
-          <p className="text-2xl font-semibold text-gray-900 dark:text-white">
+          <p className="text-xl sm:text-2xl font-semibold text-gray-900 dark:text-white truncate">
             {formatCOP(summary?.total_income || 0)}
           </p>
         </div>
 
         {/* Gastos */}
-        <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 p-5">
+        <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 p-4 sm:p-5">
           <div className="flex items-center justify-between mb-3">
             <span className="text-sm font-medium text-gray-500 dark:text-gray-400">
               Gastos
@@ -95,13 +95,13 @@ export default function DashboardPage() {
               <TrendingDown className="w-4 h-4 text-red-600 dark:text-red-400" />
             </div>
           </div>
-          <p className="text-2xl font-semibold text-gray-900 dark:text-white">
+          <p className="text-xl sm:text-2xl font-semibold text-gray-900 dark:text-white truncate">
             {formatCOP(summary?.total_expense || 0)}
           </p>
         </div>
 
         {/* Balance */}
-        <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 p-5">
+        <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 p-4 sm:p-5">
           <div className="flex items-center justify-between mb-3">
             <span className="text-sm font-medium text-gray-500 dark:text-gray-400">
               Balance
@@ -111,7 +111,7 @@ export default function DashboardPage() {
             </div>
           </div>
           <p
-            className={`text-2xl font-semibold ${
+            className={`text-xl sm:text-2xl font-semibold truncate ${
               (summary?.balance || 0) >= 0
                 ? "text-green-600 dark:text-green-400"
                 : "text-red-600 dark:text-red-400"

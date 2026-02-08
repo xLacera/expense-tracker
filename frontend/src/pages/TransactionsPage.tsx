@@ -232,29 +232,29 @@ export default function TransactionsPage() {
       </div>
 
       {/* Resumen del mes */}
-      <div className="grid grid-cols-3 gap-3">
-        <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 p-3 text-center">
-          <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">
+      <div className="grid grid-cols-3 gap-2 sm:gap-3">
+        <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 p-2.5 sm:p-3 text-center">
+          <p className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 mb-1">
             Ingresos
           </p>
-          <p className="text-sm font-semibold text-green-600 dark:text-green-400">
+          <p className="text-xs sm:text-sm font-semibold text-green-600 dark:text-green-400 truncate">
             {formatCOP(monthIncome)}
           </p>
         </div>
-        <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 p-3 text-center">
-          <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">
+        <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 p-2.5 sm:p-3 text-center">
+          <p className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 mb-1">
             Gastos
           </p>
-          <p className="text-sm font-semibold text-red-600 dark:text-red-400">
+          <p className="text-xs sm:text-sm font-semibold text-red-600 dark:text-red-400 truncate">
             {formatCOP(monthExpense)}
           </p>
         </div>
-        <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 p-3 text-center">
-          <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">
+        <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 p-2.5 sm:p-3 text-center">
+          <p className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 mb-1">
             Balance
           </p>
           <p
-            className={`text-sm font-semibold ${monthIncome - monthExpense >= 0 ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"}`}
+            className={`text-xs sm:text-sm font-semibold truncate ${monthIncome - monthExpense >= 0 ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"}`}
           >
             {formatCOP(monthIncome - monthExpense)}
           </p>
@@ -294,8 +294,8 @@ export default function TransactionsPage() {
 
       {/* Modal/Formulario */}
       {showForm && (
-        <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 shadow-lg p-6 w-full max-w-md">
+        <div className="fixed inset-0 bg-black/40 z-50 flex items-end sm:items-center justify-center sm:p-4">
+          <div className="bg-white dark:bg-gray-900 rounded-t-xl sm:rounded-lg border border-gray-200 dark:border-gray-800 shadow-lg p-5 sm:p-6 w-full sm:max-w-md max-h-[90vh] overflow-y-auto">
             <h3 className="text-base font-semibold text-gray-900 dark:text-white mb-4">
               {editingId ? "Editar transacción" : "Nueva transacción"}
             </h3>

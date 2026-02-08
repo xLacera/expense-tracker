@@ -124,29 +124,29 @@ export default function ReportsPage() {
       </div>
 
       {/* Tarjetas resumen */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 p-4 text-center">
-          <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">
-            Total ingresos
+      <div className="grid grid-cols-3 gap-2 sm:gap-4">
+        <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 p-2.5 sm:p-4 text-center">
+          <p className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 mb-1">
+            Ingresos
           </p>
-          <p className="text-lg font-semibold text-green-600 dark:text-green-400">
+          <p className="text-sm sm:text-lg font-semibold text-green-600 dark:text-green-400 truncate">
             {formatCOP(monthly?.total_income || 0)}
           </p>
         </div>
-        <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 p-4 text-center">
-          <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">
-            Total gastos
+        <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 p-2.5 sm:p-4 text-center">
+          <p className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 mb-1">
+            Gastos
           </p>
-          <p className="text-lg font-semibold text-red-600 dark:text-red-400">
+          <p className="text-sm sm:text-lg font-semibold text-red-600 dark:text-red-400 truncate">
             {formatCOP(monthly?.total_expense || 0)}
           </p>
         </div>
-        <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 p-4 text-center">
-          <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">
+        <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 p-2.5 sm:p-4 text-center">
+          <p className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 mb-1">
             Balance
           </p>
           <p
-            className={`text-lg font-semibold ${(monthly?.balance || 0) >= 0 ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"}`}
+            className={`text-sm sm:text-lg font-semibold truncate ${(monthly?.balance || 0) >= 0 ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"}`}
           >
             {formatCOP(monthly?.balance || 0)}
           </p>
@@ -154,11 +154,11 @@ export default function ReportsPage() {
       </div>
 
       {/* Gráfica: Ingresos vs Gastos (barras) */}
-      <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 p-5">
+      <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 p-3 sm:p-5">
         <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-4">
           Ingresos vs Gastos
         </h3>
-        <ResponsiveContainer width="100%" height={240}>
+        <ResponsiveContainer width="100%" height={200}>
           <BarChart data={monthlyBar}>
             <CartesianGrid
               strokeDasharray="3 3"
@@ -183,7 +183,7 @@ export default function ReportsPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Gastos por categoría */}
-        <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 p-5">
+        <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 p-3 sm:p-5">
           <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-4">
             Gastos por categoría
           </h3>
@@ -193,7 +193,7 @@ export default function ReportsPage() {
             </p>
           ) : (
             <>
-              <ResponsiveContainer width="100%" height={220}>
+              <ResponsiveContainer width="100%" height={200}>
                 <PieChart>
                   <Pie
                     data={expenseByCategory}
@@ -201,11 +201,8 @@ export default function ReportsPage() {
                     nameKey="category_name"
                     cx="50%"
                     cy="50%"
-                    outerRadius={75}
-                    label={(props) => {
-                      const p = props as unknown as Record<string, unknown>;
-                      return `${p.category_name} ${((Number(p.percent) || 0) * 100).toFixed(0)}%`;
-                    }}
+                    outerRadius={65}
+                    label={false}
                   >
                     {expenseByCategory.map((entry, index) => (
                       <Cell
@@ -243,7 +240,7 @@ export default function ReportsPage() {
         </div>
 
         {/* Ingresos por categoría */}
-        <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 p-5">
+        <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 p-3 sm:p-5">
           <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-4">
             Ingresos por categoría
           </h3>
@@ -253,7 +250,7 @@ export default function ReportsPage() {
             </p>
           ) : (
             <>
-              <ResponsiveContainer width="100%" height={220}>
+              <ResponsiveContainer width="100%" height={200}>
                 <PieChart>
                   <Pie
                     data={incomeByCategory}
@@ -261,11 +258,8 @@ export default function ReportsPage() {
                     nameKey="category_name"
                     cx="50%"
                     cy="50%"
-                    outerRadius={75}
-                    label={(props) => {
-                      const p = props as unknown as Record<string, unknown>;
-                      return `${p.category_name} ${((Number(p.percent) || 0) * 100).toFixed(0)}%`;
-                    }}
+                    outerRadius={65}
+                    label={false}
                   >
                     {incomeByCategory.map((entry, index) => (
                       <Cell
@@ -304,7 +298,7 @@ export default function ReportsPage() {
       </div>
 
       {/* Tendencia anual */}
-      <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 p-5">
+      <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 p-3 sm:p-5">
         <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-4">
           Tendencia anual {year}
         </h3>
@@ -313,7 +307,7 @@ export default function ReportsPage() {
             No hay datos para este año
           </p>
         ) : (
-          <ResponsiveContainer width="100%" height={280}>
+          <ResponsiveContainer width="100%" height={240}>
             <LineChart data={yearlyTrend}>
               <CartesianGrid
                 strokeDasharray="3 3"
@@ -356,29 +350,29 @@ export default function ReportsPage() {
 
         {/* Resumen anual */}
         {yearly && (
-          <div className="grid grid-cols-3 gap-4 mt-4 pt-4 border-t border-gray-200 dark:border-gray-800">
+          <div className="grid grid-cols-3 gap-2 sm:gap-4 mt-4 pt-4 border-t border-gray-200 dark:border-gray-800">
             <div className="text-center">
-              <p className="text-xs text-gray-500 dark:text-gray-400">
-                Total ingresos {year}
+              <p className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400">
+                Ingresos {year}
               </p>
-              <p className="text-sm font-semibold text-green-600 dark:text-green-400 mt-0.5">
+              <p className="text-xs sm:text-sm font-semibold text-green-600 dark:text-green-400 mt-0.5 truncate">
                 {formatCOP(yearly.total_income)}
               </p>
             </div>
             <div className="text-center">
-              <p className="text-xs text-gray-500 dark:text-gray-400">
-                Total gastos {year}
+              <p className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400">
+                Gastos {year}
               </p>
-              <p className="text-sm font-semibold text-red-600 dark:text-red-400 mt-0.5">
+              <p className="text-xs sm:text-sm font-semibold text-red-600 dark:text-red-400 mt-0.5 truncate">
                 {formatCOP(yearly.total_expense)}
               </p>
             </div>
             <div className="text-center">
-              <p className="text-xs text-gray-500 dark:text-gray-400">
+              <p className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400">
                 Balance {year}
               </p>
               <p
-                className={`text-sm font-semibold mt-0.5 ${yearly.balance >= 0 ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"}`}
+                className={`text-xs sm:text-sm font-semibold mt-0.5 truncate ${yearly.balance >= 0 ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"}`}
               >
                 {formatCOP(yearly.balance)}
               </p>

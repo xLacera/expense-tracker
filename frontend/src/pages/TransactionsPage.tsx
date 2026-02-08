@@ -366,7 +366,10 @@ export default function TransactionsPage() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
-                  Descripción
+                  ¿En qué?{" "}
+                  <span className="text-gray-400 font-normal">
+                    Ej: Netflix, Gasolina, Almuerzo...
+                  </span>
                 </label>
                 <input
                   type="text"
@@ -375,7 +378,11 @@ export default function TransactionsPage() {
                     setForm({ ...form, description: e.target.value })
                   }
                   className="w-full px-3 py-2 text-sm rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-900 dark:focus:ring-gray-300 focus:border-transparent"
-                  placeholder="Descripción opcional"
+                  placeholder={
+                    form.type === "expense"
+                      ? "Netflix, Gasolina, Reparación llanta..."
+                      : "Salario enero, Freelance, Venta..."
+                  }
                 />
               </div>
 
@@ -447,10 +454,10 @@ export default function TransactionsPage() {
                   </div>
                   <div className="min-w-0">
                     <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
-                      {t.description || t.category_nickname || t.category_name}
+                      {t.description || t.category_name}
                     </p>
-                    <p className="text-xs text-gray-400 dark:text-gray-500">
-                      {t.category_nickname || t.category_name} · {formatDate(t.date)}
+                    <p className="text-xs text-gray-400 dark:text-gray-500 truncate">
+                      {t.category_name} · {formatDate(t.date)}
                     </p>
                   </div>
                 </div>

@@ -29,6 +29,7 @@ export default function CategoriesPage() {
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [nickname, setNickname] = useState("");
   const [form, setForm] = useState<CreateCategoryRequest>({
     name: "",
     color: "#6366f1",
@@ -57,16 +58,18 @@ export default function CategoriesPage() {
       if (editingId) {
         await categoriesAPI.update(editingId, {
           name: form.name,
+          nickname: nickname,
           color: form.color,
           icon: form.icon,
         });
         toast.success("Categoría actualizada");
       } else {
-        await categoriesAPI.create(form);
+        await categoriesAPI.create({ ...form, nickname });
         toast.success("Categoría creada");
       }
       setShowForm(false);
       setEditingId(null);
+      setNickname("");
       setForm({ name: "", color: "#6366f1", icon: "comida", type: "expense" });
       loadCategories();
     } catch {
@@ -81,6 +84,7 @@ export default function CategoriesPage() {
       icon: cat.icon,
       type: cat.type,
     });
+    setNickname(cat.nickname || "");
     setEditingId(cat.id);
     setShowForm(true);
   };
@@ -117,6 +121,7 @@ export default function CategoriesPage() {
           onClick={() => {
             setShowForm(true);
             setEditingId(null);
+            setNickname("");
             setForm({
               name: "",
               color: "#6366f1",
@@ -180,6 +185,20 @@ export default function CategoriesPage() {
                   required
                   className="w-full px-3 py-2 text-sm rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-900 dark:focus:ring-gray-300 focus:border-transparent"
                   placeholder="Ej: Comida, Transporte..."
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
+                  Nombre personalizado{" "}
+                  <span className="text-gray-400 font-normal">(opcional)</span>
+                </label>
+                <input
+                  type="text"
+                  value={nickname}
+                  onChange={(e) => setNickname(e.target.value)}
+                  className="w-full px-3 py-2 text-sm rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-900 dark:focus:ring-gray-300 focus:border-transparent"
+                  placeholder="Ej: Mi carrito, Apto 301..."
                 />
               </div>
 
@@ -269,16 +288,23 @@ export default function CategoriesPage() {
                   key={cat.id}
                   className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 px-4 py-3 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
                 >
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-3 min-w-0">
                     <div
-                      className="w-8 h-8 rounded-md flex items-center justify-center text-sm"
+                      className="w-8 h-8 rounded-md flex items-center justify-center text-sm shrink-0"
                       style={{ backgroundColor: cat.color + "15" }}
                     >
                       {getEmoji(cat.icon)}
                     </div>
-                    <span className="text-sm font-medium text-gray-900 dark:text-white">
-                      {cat.name}
-                    </span>
+                    <div className="min-w-0">
+                      <span className="text-sm font-medium text-gray-900 dark:text-white block truncate">
+                        {cat.nickname || cat.name}
+                      </span>
+                      {cat.nickname && (
+                        <span className="text-xs text-gray-400 dark:text-gray-500 block truncate">
+                          {cat.name}
+                        </span>
+                      )}
+                    </div>
                   </div>
                   <div className="flex gap-0.5">
                     <button
@@ -316,16 +342,23 @@ export default function CategoriesPage() {
                   key={cat.id}
                   className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 px-4 py-3 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
                 >
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-3 min-w-0">
                     <div
-                      className="w-8 h-8 rounded-md flex items-center justify-center text-sm"
+                      className="w-8 h-8 rounded-md flex items-center justify-center text-sm shrink-0"
                       style={{ backgroundColor: cat.color + "15" }}
                     >
                       {getEmoji(cat.icon)}
                     </div>
-                    <span className="text-sm font-medium text-gray-900 dark:text-white">
-                      {cat.name}
-                    </span>
+                    <div className="min-w-0">
+                      <span className="text-sm font-medium text-gray-900 dark:text-white block truncate">
+                        {cat.nickname || cat.name}
+                      </span>
+                      {cat.nickname && (
+                        <span className="text-xs text-gray-400 dark:text-gray-500 block truncate">
+                          {cat.name}
+                        </span>
+                      )}
+                    </div>
                   </div>
                   <div className="flex gap-0.5">
                     <button

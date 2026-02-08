@@ -7,9 +7,10 @@ type Transaction struct {
 	ID            string    `json:"id"`
 	UserID        string    `json:"user_id"`
 	CategoryID    string    `json:"category_id"`
-	CategoryName  string    `json:"category_name,omitempty"`
-	CategoryColor string    `json:"category_color,omitempty"`
-	CategoryIcon  string    `json:"category_icon,omitempty"`
+	CategoryName     string    `json:"category_name,omitempty"`
+	CategoryNickname string    `json:"category_nickname,omitempty"`
+	CategoryColor    string    `json:"category_color,omitempty"`
+	CategoryIcon     string    `json:"category_icon,omitempty"`
 	Amount        float64   `json:"amount"`
 	Type          string    `json:"type"`
 	Description   string    `json:"description"`

@@ -76,7 +76,7 @@ func (s *CategoryService) Create(ctx context.Context, userID string, req models.
 }
 
 func (s *CategoryService) Update(ctx context.Context, id, userID string, req models.UpdateCategoryRequest) (*models.Category, error) {
-	return s.categoryRepo.Update(ctx, id, userID, req.Name, req.Color, req.Icon)
+	return s.categoryRepo.Update(ctx, id, userID, req.Name, req.Nickname, req.Color, req.Icon)
 }
 
 func (s *CategoryService) Delete(ctx context.Context, id, userID string) error {

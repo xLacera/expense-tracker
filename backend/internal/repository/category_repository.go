@@ -21,7 +21,7 @@ func NewCategoryRepository(pool *pgxpool.Pool) *CategoryRepository {
 // GetAllByUser devuelve todas las categorías de un usuario.
 func (r *CategoryRepository) GetAllByUser(ctx context.Context, userID string) ([]models.Category, error) {
 	rows, err := r.pool.Query(ctx,
-		`SELECT id, user_id, name, color, icon, type, created_at
+		`SELECT id, user_id, name, nickname, color, icon, type, created_at
 		 FROM categories
 		 WHERE user_id = $1
 		 ORDER BY type, name`,
@@ -35,7 +35,7 @@ func (r *CategoryRepository) GetAllByUser(ctx context.Context, userID string) ([
 	var categories []models.Category
 	for rows.Next() {
 		var cat models.Category
-		err := rows.Scan(&cat.ID, &cat.UserID, &cat.Name, &cat.Color, &cat.Icon, &cat.Type, &cat.CreatedAt)
+		err := rows.Scan(&cat.ID, &cat.UserID, &cat.Name, &cat.Nickname, &cat.Color, &cat.Icon, &cat.Type, &cat.CreatedAt)
 		if err != nil {
 			return nil, fmt.Errorf("error leyendo categoría: %w", err)
 		}
@@ -49,11 +49,11 @@ func (r *CategoryRepository) GetAllByUser(ctx context.Context, userID string) ([
 func (r *CategoryRepository) GetByID(ctx context.Context, id, userID string) (*models.Category, error) {
 	cat := &models.Category{}
 	err := r.pool.QueryRow(ctx,
-		`SELECT id, user_id, name, color, icon, type, created_at
+		`SELECT id, user_id, name, nickname, color, icon, type, created_at
 		 FROM categories
 		 WHERE id = $1 AND user_id = $2`,
 		id, userID,
-	).Scan(&cat.ID, &cat.UserID, &cat.Name, &cat.Color, &cat.Icon, &cat.Type, &cat.CreatedAt)
+	).Scan(&cat.ID, &cat.UserID, &cat.Name, &cat.Nickname, &cat.Color, &cat.Icon, &cat.Type, &cat.CreatedAt)
 
 	if err != nil {
 		return nil, fmt.Errorf("categoría no encontrada: %w", err)
@@ -65,11 +65,11 @@ func (r *CategoryRepository) GetByID(ctx context.Context, id, userID string) (*m
 func (r *CategoryRepository) Create(ctx context.Context, userID, name, color, icon, catType string) (*models.Category, error) {
 	cat := &models.Category{}
 	err := r.pool.QueryRow(ctx,
-		`INSERT INTO categories (user_id, name, color, icon, type)
-		 VALUES ($1, $2, $3, $4, $5)
-		 RETURNING id, user_id, name, color, icon, type, created_at`,
+		`INSERT INTO categories (user_id, name, nickname, color, icon, type)
+		 VALUES ($1, $2, '', $3, $4, $5)
+		 RETURNING id, user_id, name, nickname, color, icon, type, created_at`,
 		userID, name, color, icon, catType,
-	).Scan(&cat.ID, &cat.UserID, &cat.Name, &cat.Color, &cat.Icon, &cat.Type, &cat.CreatedAt)
+	).Scan(&cat.ID, &cat.UserID, &cat.Name, &cat.Nickname, &cat.Color, &cat.Icon, &cat.Type, &cat.CreatedAt)
 
 	if err != nil {
 		return nil, fmt.Errorf("error creando categoría: %w", err)
@@ -78,17 +78,18 @@ func (r *CategoryRepository) Create(ctx context.Context, userID, name, color, ic
 }
 
 // Update actualiza los campos de una categoría existente.
-func (r *CategoryRepository) Update(ctx context.Context, id, userID, name, color, icon string) (*models.Category, error) {
+func (r *CategoryRepository) Update(ctx context.Context, id, userID, name, nickname, color, icon string) (*models.Category, error) {
 	cat := &models.Category{}
 	err := r.pool.QueryRow(ctx,
 		`UPDATE categories
 		 SET name = COALESCE(NULLIF($3, ''), name),
-		     color = COALESCE(NULLIF($4, ''), color),
-		     icon = COALESCE(NULLIF($5, ''), icon)
+		     nickname = $4,
+		     color = COALESCE(NULLIF($5, ''), color),
+		     icon = COALESCE(NULLIF($6, ''), icon)
 		 WHERE id = $1 AND user_id = $2
-		 RETURNING id, user_id, name, color, icon, type, created_at`,
-		id, userID, name, color, icon,
-	).Scan(&cat.ID, &cat.UserID, &cat.Name, &cat.Color, &cat.Icon, &cat.Type, &cat.CreatedAt)
+		 RETURNING id, user_id, name, nickname, color, icon, type, created_at`,
+		id, userID, name, nickname, color, icon,
+	).Scan(&cat.ID, &cat.UserID, &cat.Name, &cat.Nickname, &cat.Color, &cat.Icon, &cat.Type, &cat.CreatedAt)
 
 	if err != nil {
 		return nil, fmt.Errorf("error actualizando categoría: %w", err)

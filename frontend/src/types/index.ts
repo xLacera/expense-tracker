@@ -18,6 +18,7 @@ export interface Category {
   id: string;
   user_id: string;
   name: string;
+  nickname: string; // Alias personalizado (ej: "Mi carrito" para Auto)
   color: string;
   icon: string;
   type: "income" | "expense";
@@ -26,6 +27,7 @@ export interface Category {
 
 export interface CreateCategoryRequest {
   name: string;
+  nickname?: string;
   color: string;
   icon: string;
   type: "income" | "expense";
@@ -36,6 +38,7 @@ export interface Transaction {
   user_id: string;
   category_id: string;
   category_name?: string;
+  category_nickname?: string;
   category_color?: string;
   category_icon?: string;
   amount: number;

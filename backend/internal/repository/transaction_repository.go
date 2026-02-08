@@ -59,7 +59,7 @@ func (r *TransactionRepository) GetFiltered(ctx context.Context, filter models.T
 		return nil, 0, fmt.Errorf("error contando transacciones: %w", err)
 	}
 
-	selectQuery := `SELECT t.id, t.user_id, t.category_id, c.name, c.color, c.icon,
+	selectQuery := `SELECT t.id, t.user_id, t.category_id, c.name, c.nickname, c.color, c.icon,
 		t.amount, t.type, t.description, t.date, t.currency, t.created_at, t.updated_at ` +
 		baseQuery + " ORDER BY t.date DESC, t.created_at DESC"
 
@@ -77,7 +77,7 @@ func (r *TransactionRepository) GetFiltered(ctx context.Context, filter models.T
 	for rows.Next() {
 		var t models.Transaction
 		err := rows.Scan(
-			&t.ID, &t.UserID, &t.CategoryID, &t.CategoryName, &t.CategoryColor, &t.CategoryIcon,
+			&t.ID, &t.UserID, &t.CategoryID, &t.CategoryName, &t.CategoryNickname, &t.CategoryColor, &t.CategoryIcon,
 			&t.Amount, &t.Type, &t.Description, &t.Date, &t.Currency,
 			&t.CreatedAt, &t.UpdatedAt,
 		)
@@ -94,7 +94,7 @@ func (r *TransactionRepository) GetFiltered(ctx context.Context, filter models.T
 // GetAllForExport devuelve TODAS las transacciones del usuario (sin paginación) para CSV.
 func (r *TransactionRepository) GetAllForExport(ctx context.Context, userID string, filter models.TransactionFilter) ([]models.Transaction, error) {
 	baseQuery := `
-		SELECT t.id, t.user_id, t.category_id, c.name, c.color, c.icon,
+		SELECT t.id, t.user_id, t.category_id, c.name, c.nickname, c.color, c.icon,
 			t.amount, t.type, t.description, t.date, t.currency, t.created_at, t.updated_at
 		FROM transactions t
 		JOIN categories c ON t.category_id = c.id
@@ -129,7 +129,7 @@ func (r *TransactionRepository) GetAllForExport(ctx context.Context, userID stri
 	for rows.Next() {
 		var t models.Transaction
 		err := rows.Scan(
-			&t.ID, &t.UserID, &t.CategoryID, &t.CategoryName, &t.CategoryColor, &t.CategoryIcon,
+			&t.ID, &t.UserID, &t.CategoryID, &t.CategoryName, &t.CategoryNickname, &t.CategoryColor, &t.CategoryIcon,
 			&t.Amount, &t.Type, &t.Description, &t.Date, &t.Currency,
 			&t.CreatedAt, &t.UpdatedAt,
 		)

@@ -447,10 +447,10 @@ export default function TransactionsPage() {
                   </div>
                   <div className="min-w-0">
                     <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
-                      {t.description || t.category_name}
+                      {t.description || t.category_nickname || t.category_name}
                     </p>
                     <p className="text-xs text-gray-400 dark:text-gray-500">
-                      {t.category_name} · {formatDate(t.date)}
+                      {t.category_nickname || t.category_name} · {formatDate(t.date)}
                     </p>
                   </div>
                 </div>

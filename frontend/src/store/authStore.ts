@@ -53,15 +53,10 @@ export const useAuthStore = create<AuthState>((set) => ({
   register: async (email, password, name) => {
     set({ isLoading: true, error: null });
     try {
-      const response = await authAPI.register(email, password, name);
-      localStorage.setItem("token", response.token);
-      localStorage.setItem("user", JSON.stringify(response.user));
-      set({
-        user: response.user,
-        token: response.token,
-        isAuthenticated: true,
-        isLoading: false,
-      });
+      // Solo creamos la cuenta, NO guardamos token ni iniciamos sesión.
+      // El usuario debe iniciar sesión manualmente después de registrarse.
+      await authAPI.register(email, password, name);
+      set({ isLoading: false });
     } catch (err: unknown) {
       const error = err as { response?: { data?: { message?: string } } };
       set({

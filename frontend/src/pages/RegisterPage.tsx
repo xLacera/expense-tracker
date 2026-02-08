@@ -18,8 +18,8 @@ export default function RegisterPage() {
     e.preventDefault();
     try {
       await register(email, password, name);
-      toast.success("¡Cuenta creada exitosamente!");
-      navigate("/dashboard");
+      toast.success("¡Cuenta creada! Ahora inicia sesión.");
+      navigate("/login");
     } catch {
       toast.error("Error al crear la cuenta");
     }

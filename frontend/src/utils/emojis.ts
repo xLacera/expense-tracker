@@ -22,6 +22,17 @@ export const CATEGORY_EMOJIS: Record<string, string> = {
   // Ingresos
   salario: "💰",
   deposito: "🏦",
+  // Ahorros / Bancos
+  piggybank: "🐷",
+  banco: "🏦",
+  caja: "💼",
+  monedas: "🪙",
+  billete: "💵",
+  seguro: "🔒",
+  estrella: "⭐",
+  diamante: "💎",
+  cohete: "🚀",
+  meta: "🎯",
   // Otros
   otros: "📌",
   tag: "🏷️",
@@ -57,4 +68,18 @@ export const INCOME_EMOJI_OPTIONS = [
   { key: "salario", emoji: "💰", label: "Salario" },
   { key: "deposito", emoji: "🏦", label: "Depósito" },
   { key: "otros", emoji: "📌", label: "Otros" },
+];
+
+// Lista de emojis para cuentas de ahorro
+export const SAVINGS_EMOJI_OPTIONS = [
+  { key: "banco", emoji: "🏦", label: "Banco" },
+  { key: "piggybank", emoji: "🐷", label: "Alcancía" },
+  { key: "billete", emoji: "💵", label: "Efectivo" },
+  { key: "monedas", emoji: "🪙", label: "Monedas" },
+  { key: "caja", emoji: "💼", label: "Caja fuerte" },
+  { key: "seguro", emoji: "🔒", label: "Seguro" },
+  { key: "estrella", emoji: "⭐", label: "Estrella" },
+  { key: "diamante", emoji: "💎", label: "Diamante" },
+  { key: "cohete", emoji: "🚀", label: "Cohete" },
+  { key: "meta", emoji: "🎯", label: "Meta" },
 ];

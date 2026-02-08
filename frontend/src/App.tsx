@@ -14,6 +14,7 @@ import TransactionsPage from "./pages/TransactionsPage";
 import CategoriesPage from "./pages/CategoriesPage";
 import BudgetsPage from "./pages/BudgetsPage";
 import ReportsPage from "./pages/ReportsPage";
+import SavingsPage from "./pages/SavingsPage";
 
 // Componentes de layout
 import Layout from "./components/Layout";
@@ -68,6 +69,7 @@ function App() {
           <Route path="/categories" element={<CategoriesPage />} />
           <Route path="/budgets" element={<BudgetsPage />} />
           <Route path="/reports" element={<ReportsPage />} />
+          <Route path="/savings" element={<SavingsPage />} />
         </Route>
 
         {/* Redirigir la raíz al dashboard */}

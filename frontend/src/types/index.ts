@@ -126,3 +126,43 @@ export interface YearlySummary {
   balance: number;
   monthly: MonthlyTotals[];
 }
+
+// --- Cuentas de ahorro ---
+
+export interface SavingsAccount {
+  id: string;
+  user_id: string;
+  name: string;
+  balance: number;
+  color: string;
+  icon: string;
+  notes: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CreateSavingsAccountRequest {
+  name: string;
+  balance: number;
+  color: string;
+  icon: string;
+  notes: string;
+}
+
+export interface UpdateSavingsAccountRequest {
+  name?: string;
+  balance?: number;
+  color?: string;
+  icon?: string;
+  notes?: string;
+}
+
+export interface AdjustBalanceRequest {
+  amount: number;
+  type: "deposit" | "withdraw";
+}
+
+export interface SavingsListResponse {
+  accounts: SavingsAccount[];
+  total: number;
+}

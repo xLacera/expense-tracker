@@ -40,12 +40,19 @@ export default function LoginPage() {
         const message = err.response?.data?.message;
 
         if (status === 401) {
-          setError(message || "Email o contraseña incorrectos. Verifica tus datos e intenta de nuevo.");
+          setError(
+            message ||
+              "Email o contraseña incorrectos. Verifica tus datos e intenta de nuevo.",
+          );
         } else if (status === 400) {
-          setError(message || "Datos inválidos. Revisa el formato de tu email.");
+          setError(
+            message || "Datos inválidos. Revisa el formato de tu email.",
+          );
         } else if (!err.response) {
           // Error de red: backend no responde
-          setError("No se puede conectar al servidor. Intenta de nuevo en unos segundos.");
+          setError(
+            "No se puede conectar al servidor. Intenta de nuevo en unos segundos.",
+          );
         } else {
           setError(message || "Error inesperado. Intenta de nuevo.");
         }

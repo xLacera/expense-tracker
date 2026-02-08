@@ -55,11 +55,18 @@ export default function RegisterPage() {
         const message = err.response?.data?.message;
 
         if (status === 409) {
-          setError(message || "Este email ya está registrado. ¿Quieres iniciar sesión?");
+          setError(
+            message ||
+              "Este email ya está registrado. ¿Quieres iniciar sesión?",
+          );
         } else if (status === 400) {
-          setError(message || "Datos inválidos. Revisa los campos e intenta de nuevo.");
+          setError(
+            message || "Datos inválidos. Revisa los campos e intenta de nuevo.",
+          );
         } else if (!err.response) {
-          setError("No se puede conectar al servidor. Intenta de nuevo en unos segundos.");
+          setError(
+            "No se puede conectar al servidor. Intenta de nuevo en unos segundos.",
+          );
         } else {
           setError(message || "Error inesperado. Intenta de nuevo.");
         }
@@ -231,7 +238,9 @@ export default function RegisterPage() {
 
           <button
             type="submit"
-            disabled={isLoading || (confirmPassword.length > 0 && !passwordChecks.match)}
+            disabled={
+              isLoading || (confirmPassword.length > 0 && !passwordChecks.match)
+            }
             className="w-full py-2.5 px-4 text-sm font-medium bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-md hover:bg-gray-800 dark:hover:bg-gray-100 disabled:opacity-50 transition-colors"
           >
             {isLoading ? "Creando cuenta..." : "Crear cuenta"}

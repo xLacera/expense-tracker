@@ -10,15 +10,27 @@ import {
   Tags,
   Wallet,
   BarChart3,
+  PiggyBank,
   LogOut,
   Moon,
   Sun,
 } from "lucide-react";
 
+// Navegación completa (sidebar en desktop)
 const navItems = [
   { to: "/dashboard", icon: LayoutDashboard, label: "Panel" },
   { to: "/transactions", icon: ArrowLeftRight, label: "Movimientos" },
+  { to: "/savings", icon: PiggyBank, label: "Ahorros" },
   { to: "/categories", icon: Tags, label: "Categorías" },
+  { to: "/budgets", icon: Wallet, label: "Presupuestos" },
+  { to: "/reports", icon: BarChart3, label: "Reportes" },
+];
+
+// Bottom nav en mobile (máximo 5 items para que quepan bien)
+const mobileNavItems = [
+  { to: "/dashboard", icon: LayoutDashboard, label: "Panel" },
+  { to: "/transactions", icon: ArrowLeftRight, label: "Movimientos" },
+  { to: "/savings", icon: PiggyBank, label: "Ahorros" },
   { to: "/budgets", icon: Wallet, label: "Presupuestos" },
   { to: "/reports", icon: BarChart3, label: "Reportes" },
 ];
@@ -27,6 +39,7 @@ const navItems = [
 const pageTitles: Record<string, string> = {
   "/dashboard": "Panel principal",
   "/transactions": "Transacciones",
+  "/savings": "Ahorros",
   "/categories": "Categorías",
   "/budgets": "Presupuestos",
   "/reports": "Reportes",
@@ -152,7 +165,7 @@ export default function Layout() {
       {/* ===== BOTTOM NAVIGATION — solo visible en mobile (< lg) ===== */}
       <nav className="lg:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 z-40 safe-area-bottom">
         <div className="flex items-center justify-around h-16">
-          {navItems.map((item) => (
+          {mobileNavItems.map((item) => (
             <NavLink
               key={item.to}
               to={item.to}

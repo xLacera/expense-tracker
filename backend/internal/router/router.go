@@ -30,6 +30,7 @@ func Setup(pool *pgxpool.Pool, jwtSecret string, corsOrigin string) *gin.Engine 
 	transactionRepo := repository.NewTransactionRepository(pool)
 	budgetRepo := repository.NewBudgetRepository(pool)
 	reportRepo := repository.NewReportRepository(pool)
+	savingsRepo := repository.NewSavingsRepository(pool)
 
 	// --- Crear services ---
 	authService := services.NewAuthService(userRepo, categoryRepo, jwtSecret)
@@ -37,6 +38,7 @@ func Setup(pool *pgxpool.Pool, jwtSecret string, corsOrigin string) *gin.Engine 
 	transactionService := services.NewTransactionService(transactionRepo)
 	budgetService := services.NewBudgetService(budgetRepo)
 	reportService := services.NewReportService(reportRepo)
+	savingsService := services.NewSavingsService(savingsRepo)
 
 	// --- Crear handlers ---
 	authHandler := handlers.NewAuthHandler(authService)
@@ -44,6 +46,7 @@ func Setup(pool *pgxpool.Pool, jwtSecret string, corsOrigin string) *gin.Engine 
 	transactionHandler := handlers.NewTransactionHandler(transactionService)
 	budgetHandler := handlers.NewBudgetHandler(budgetService)
 	reportHandler := handlers.NewReportHandler(reportService)
+	savingsHandler := handlers.NewSavingsHandler(savingsService)
 
 	// ============================================
 	// RUTAS PÚBLICAS (no requieren JWT)
@@ -102,6 +105,16 @@ func Setup(pool *pgxpool.Pool, jwtSecret string, corsOrigin string) *gin.Engine 
 		{
 			reports.GET("/monthly", reportHandler.GetMonthly)
 			reports.GET("/yearly", reportHandler.GetYearly)
+		}
+
+		// Cuentas de ahorro
+		savings := protected.Group("/savings")
+		{
+			savings.GET("", savingsHandler.GetAll)
+			savings.POST("", savingsHandler.Create)
+			savings.PUT("/:id", savingsHandler.Update)
+			savings.POST("/:id/adjust", savingsHandler.AdjustBalance)
+			savings.DELETE("/:id", savingsHandler.Delete)
 		}
 	}
 

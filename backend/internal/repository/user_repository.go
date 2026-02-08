@@ -71,3 +71,16 @@ func (r *UserRepository) GetByID(ctx context.Context, id string) (*models.User, 
 	}
 	return user, nil
 }
+
+// UpdatePassword actualiza el password_hash de un usuario.
+// Se usa en el flujo de restablecer contraseña.
+func (r *UserRepository) UpdatePassword(ctx context.Context, userID, newPasswordHash string) error {
+	_, err := r.pool.Exec(ctx,
+		`UPDATE users SET password_hash = $1, updated_at = NOW() WHERE id = $2`,
+		newPasswordHash, userID,
+	)
+	if err != nil {
+		return fmt.Errorf("error actualizando contraseña: %w", err)
+	}
+	return nil
+}

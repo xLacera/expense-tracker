@@ -67,12 +67,82 @@ func (h *AuthHandler) Login(c *gin.Context) {
 
 	response, err := h.authService.Login(c.Request.Context(), req)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{
-			"error":   "login_fallido",
+		// Diferenciar: email no encontrado (404) vs contraseña incorrecta (401)
+		if err == services.ErrEmailNotFound {
+			c.JSON(http.StatusNotFound, gin.H{
+				"error":   "email_no_registrado",
+				"message": err.Error(),
+			})
+		} else if err == services.ErrWrongPassword {
+			c.JSON(http.StatusUnauthorized, gin.H{
+				"error":   "password_incorrecta",
+				"message": err.Error(),
+			})
+		} else {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"error":   "login_fallido",
+				"message": err.Error(),
+			})
+		}
+		return
+	}
+
+	c.JSON(http.StatusOK, response)
+}
+
+// ForgotPassword maneja POST /api/auth/forgot-password
+// El frontend envía: { email }
+// El backend genera un OTP, lo guarda en DB, y lo envía por email.
+func (h *AuthHandler) ForgotPassword(c *gin.Context) {
+	var req models.ForgotPasswordRequest
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error":   "datos_invalidos",
+			"message": "Ingresa un correo electrónico válido",
+		})
+		return
+	}
+
+	err := h.authService.ForgotPassword(c.Request.Context(), req)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error":   "error_envio",
 			"message": err.Error(),
 		})
 		return
 	}
 
-	c.JSON(http.StatusOK, response)
+	// Siempre responder éxito (por seguridad, no revelar si el email existe)
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Si el correo está registrado, recibirás un código de verificación",
+	})
+}
+
+// ResetPassword maneja POST /api/auth/reset-password
+// El frontend envía: { email, otp, new_password }
+// El backend verifica el OTP y actualiza la contraseña.
+func (h *AuthHandler) ResetPassword(c *gin.Context) {
+	var req models.ResetPasswordRequest
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error":   "datos_invalidos",
+			"message": "Verifica los datos: correo válido, código de 6 dígitos, y contraseña mínimo 6 caracteres",
+		})
+		return
+	}
+
+	err := h.authService.ResetPassword(c.Request.Context(), req)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error":   "reset_fallido",
+			"message": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Contraseña actualizada exitosamente. Ya puedes iniciar sesión",
+	})
 }

@@ -33,3 +33,25 @@ type AuthResponse struct {
 	Token string `json:"token"`
 	User  User   `json:"user"`
 }
+
+// ForgotPasswordRequest es lo que el frontend envía para solicitar un OTP.
+type ForgotPasswordRequest struct {
+	Email string `json:"email" binding:"required,email"`
+}
+
+// ResetPasswordRequest es lo que el frontend envía para restablecer la contraseña.
+type ResetPasswordRequest struct {
+	Email       string `json:"email" binding:"required,email"`
+	OTP         string `json:"otp" binding:"required,len=6"`
+	NewPassword string `json:"new_password" binding:"required,min=6"`
+}
+
+// PasswordReset representa un registro de OTP en la tabla password_resets.
+type PasswordReset struct {
+	ID        string    `json:"id"`
+	UserID    string    `json:"user_id"`
+	OTPCode   string    `json:"otp_code"`
+	ExpiresAt time.Time `json:"expires_at"`
+	Used      bool      `json:"used"`
+	CreatedAt time.Time `json:"created_at"`
+}

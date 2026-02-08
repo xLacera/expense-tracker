@@ -3,8 +3,10 @@
 package router
 
 import (
+	"log"
 	"net/http"
 
+	"expense-tracker-backend/internal/email"
 	"expense-tracker-backend/internal/handlers"
 	"expense-tracker-backend/internal/middleware"
 	"expense-tracker-backend/internal/repository"
@@ -16,7 +18,8 @@ import (
 
 // Setup crea y configura el router de Gin con todas las rutas.
 // corsOrigin permite agregar dominios adicionales para CORS (producción).
-func Setup(pool *pgxpool.Pool, jwtSecret string, corsOrigin string) *gin.Engine {
+// resendAPIKey es la clave de Resend para enviar emails (puede estar vacía en dev).
+func Setup(pool *pgxpool.Pool, jwtSecret string, corsOrigin string, resendAPIKey string) *gin.Engine {
 	router := gin.New()
 
 	// Middlewares globales
@@ -31,9 +34,19 @@ func Setup(pool *pgxpool.Pool, jwtSecret string, corsOrigin string) *gin.Engine 
 	budgetRepo := repository.NewBudgetRepository(pool)
 	reportRepo := repository.NewReportRepository(pool)
 	savingsRepo := repository.NewSavingsRepository(pool)
+	passwordResetRepo := repository.NewPasswordResetRepository(pool)
+
+	// --- Crear servicio de email (Resend) ---
+	var emailService *email.ResendService
+	if resendAPIKey != "" {
+		emailService = email.NewResendService(resendAPIKey)
+		log.Println("Servicio de email (Resend) configurado correctamente")
+	} else {
+		log.Println("RESEND_API_KEY no configurada — el envío de emails estará deshabilitado")
+	}
 
 	// --- Crear services ---
-	authService := services.NewAuthService(userRepo, categoryRepo, jwtSecret)
+	authService := services.NewAuthService(userRepo, categoryRepo, passwordResetRepo, emailService, jwtSecret)
 	categoryService := services.NewCategoryService(categoryRepo)
 	transactionService := services.NewTransactionService(transactionRepo)
 	budgetService := services.NewBudgetService(budgetRepo)
@@ -64,6 +77,8 @@ func Setup(pool *pgxpool.Pool, jwtSecret string, corsOrigin string) *gin.Engine 
 		{
 			auth.POST("/register", authHandler.Register)
 			auth.POST("/login", authHandler.Login)
+			auth.POST("/forgot-password", authHandler.ForgotPassword)
+			auth.POST("/reset-password", authHandler.ResetPassword)
 		}
 	}
 

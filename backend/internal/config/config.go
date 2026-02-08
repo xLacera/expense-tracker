@@ -27,6 +27,9 @@ type Config struct {
 
 	// CORS: orígenes permitidos (para producción)
 	CORSOrigin string
+
+	// Resend: API key para enviar emails (OTP password reset)
+	ResendAPIKey string
 }
 
 // Load lee todas las variables de entorno y devuelve un Config.
@@ -49,6 +52,9 @@ func Load() (*Config, error) {
 
 		// Orígenes CORS adicionales (separados por coma)
 		CORSOrigin: getEnv("CORS_ORIGIN", ""),
+
+		// Resend API Key para enviar emails
+		ResendAPIKey: getEnv("RESEND_API_KEY", ""),
 	}
 
 	// En producción, DATABASE_URL reemplaza las variables individuales

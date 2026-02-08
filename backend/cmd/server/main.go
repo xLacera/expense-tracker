@@ -40,7 +40,7 @@ func main() {
 	}
 
 	// 5. Configurar router con todas las rutas
-	r := router.Setup(pool, cfg.JWTSecret, cfg.CORSOrigin)
+	r := router.Setup(pool, cfg.JWTSecret, cfg.CORSOrigin, cfg.ResendAPIKey)
 
 	// 6. Iniciar servidor HTTP
 	log.Printf("Servidor iniciando en puerto %s...", cfg.BackendPort)

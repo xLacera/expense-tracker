@@ -39,20 +39,16 @@ export default function LoginPage() {
         const status = err.response?.status;
         const message = err.response?.data?.message;
 
-        if (status === 401) {
-          setError(
-            message ||
-              "Email o contraseña incorrectos. Verifica tus datos e intenta de nuevo.",
-          );
+        if (status === 404) {
+          // Email no registrado
+          setError(message || "No hay una cuenta registrada con este correo.");
+        } else if (status === 401) {
+          // Contraseña incorrecta
+          setError(message || "Contraseña incorrecta. Verifica e intenta de nuevo.");
         } else if (status === 400) {
-          setError(
-            message || "Datos inválidos. Revisa el formato de tu email.",
-          );
+          setError(message || "Datos inválidos. Revisa el formato de tu email.");
         } else if (!err.response) {
-          // Error de red: backend no responde
-          setError(
-            "No se puede conectar al servidor. Intenta de nuevo en unos segundos.",
-          );
+          setError("No se puede conectar al servidor. Intenta de nuevo en unos segundos.");
         } else {
           setError(message || "Error inesperado. Intenta de nuevo.");
         }
@@ -98,10 +94,7 @@ export default function LoginPage() {
             <input
               type="email"
               value={email}
-              onChange={(e) => {
-                setEmail(e.target.value);
-                setError("");
-              }}
+              onChange={(e) => setEmail(e.target.value)}
               required
               autoComplete="email"
               className="w-full px-3 py-2 text-sm rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-900 dark:focus:ring-gray-300 focus:border-transparent transition-shadow"
@@ -117,10 +110,7 @@ export default function LoginPage() {
               <input
                 type={showPassword ? "text" : "password"}
                 value={password}
-                onChange={(e) => {
-                  setPassword(e.target.value);
-                  setError("");
-                }}
+                onChange={(e) => setPassword(e.target.value)}
                 required
                 autoComplete="current-password"
                 className="w-full px-3 py-2 text-sm rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-900 dark:focus:ring-gray-300 focus:border-transparent transition-shadow pr-10"
@@ -138,6 +128,16 @@ export default function LoginPage() {
                 )}
               </button>
             </div>
+          </div>
+
+          {/* Link para restablecer contraseña */}
+          <div className="text-right">
+            <Link
+              to="/forgot-password"
+              className="text-xs text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+            >
+              ¿Olvidaste tu contraseña?
+            </Link>
           </div>
 
           <button

@@ -15,6 +15,7 @@ import CategoriesPage from "./pages/CategoriesPage";
 import BudgetsPage from "./pages/BudgetsPage";
 import ReportsPage from "./pages/ReportsPage";
 import SavingsPage from "./pages/SavingsPage";
+import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 
 // Componentes de layout
 import Layout from "./components/Layout";
@@ -55,6 +56,7 @@ function App() {
         {/* Rutas públicas */}
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
 
         {/* Rutas protegidas - envueltas en Layout (sidebar + contenido) */}
         <Route

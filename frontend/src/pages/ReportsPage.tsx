@@ -171,7 +171,7 @@ export default function ReportsPage() {
               fontSize={12}
               tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`}
             />
-            <Tooltip formatter={(value: number) => formatCOP(value)} />
+            <Tooltip formatter={(value) => formatCOP(Number(value))} />
             <Bar dataKey="value" radius={[4, 4, 0, 0]}>
               {monthlyBar.map((entry, index) => (
                 <Cell key={index} fill={entry.fill} />
@@ -202,8 +202,8 @@ export default function ReportsPage() {
                     cx="50%"
                     cy="50%"
                     outerRadius={75}
-                    label={({ category_name, percent }) =>
-                      `${category_name} ${(percent * 100).toFixed(0)}%`
+                    label={(props: Record<string, unknown>) =>
+                      `${props.category_name} ${((Number(props.percent) || 0) * 100).toFixed(0)}%`
                     }
                   >
                     {expenseByCategory.map((entry, index) => (
@@ -213,7 +213,7 @@ export default function ReportsPage() {
                       />
                     ))}
                   </Pie>
-                  <Tooltip formatter={(value: number) => formatCOP(value)} />
+                  <Tooltip formatter={(value) => formatCOP(Number(value))} />
                 </PieChart>
               </ResponsiveContainer>
               <div className="mt-3 space-y-1.5">
@@ -261,8 +261,8 @@ export default function ReportsPage() {
                     cx="50%"
                     cy="50%"
                     outerRadius={75}
-                    label={({ category_name, percent }) =>
-                      `${category_name} ${(percent * 100).toFixed(0)}%`
+                    label={(props: Record<string, unknown>) =>
+                      `${props.category_name} ${((Number(props.percent) || 0) * 100).toFixed(0)}%`
                     }
                   >
                     {incomeByCategory.map((entry, index) => (
@@ -272,7 +272,7 @@ export default function ReportsPage() {
                       />
                     ))}
                   </Pie>
-                  <Tooltip formatter={(value: number) => formatCOP(value)} />
+                  <Tooltip formatter={(value) => formatCOP(Number(value))} />
                 </PieChart>
               </ResponsiveContainer>
               <div className="mt-3 space-y-1.5">
@@ -324,7 +324,7 @@ export default function ReportsPage() {
                 fontSize={12}
                 tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`}
               />
-              <Tooltip formatter={(value: number) => formatCOP(value)} />
+              <Tooltip formatter={(value) => formatCOP(Number(value))} />
               <Legend />
               <Line
                 type="monotone"

@@ -1,0 +1,23 @@
+# Env files (contienen secretos — NUNCA subir a GitHub)
+.env
+.env.local
+.env.production
+
+# Node
+node_modules/
+dist/
+
+# Go
+backend/tmp/
+
+# IDE
+.vscode/
+.idea/
+.cursor/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker volumes
+postgres_data/

@@ -1,0 +1,128 @@
+// Tipos TypeScript - Definen la forma de los datos en toda la app.
+// Esto nos da autocompletado y detección de errores en tiempo de desarrollo.
+
+export interface User {
+  id: string;
+  email: string;
+  name: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface AuthResponse {
+  token: string;
+  user: User;
+}
+
+export interface Category {
+  id: string;
+  user_id: string;
+  name: string;
+  color: string;
+  icon: string;
+  type: "income" | "expense";
+  created_at: string;
+}
+
+export interface CreateCategoryRequest {
+  name: string;
+  color: string;
+  icon: string;
+  type: "income" | "expense";
+}
+
+export interface Transaction {
+  id: string;
+  user_id: string;
+  category_id: string;
+  category_name?: string;
+  category_color?: string;
+  category_icon?: string;
+  amount: number;
+  type: "income" | "expense";
+  description: string;
+  date: string;
+  currency: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CreateTransactionRequest {
+  category_id: string;
+  amount: number;
+  type: "income" | "expense";
+  description: string;
+  date: string;
+  currency?: string;
+}
+
+export interface TransactionListResponse {
+  transactions: Transaction[];
+  total: number;
+  page: number;
+  limit: number;
+  total_pages: number;
+}
+
+export interface TransactionFilter {
+  type?: string;
+  category_id?: string;
+  date_from?: string;
+  date_to?: string;
+  page?: number;
+  limit?: number;
+}
+
+export interface Budget {
+  id: string;
+  user_id: string;
+  category_id: string;
+  category_name?: string;
+  category_color?: string;
+  category_icon?: string;
+  amount_limit: number;
+  spent: number;
+  month: number;
+  year: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CreateBudgetRequest {
+  category_id: string;
+  amount_limit: number;
+  month: number;
+  year: number;
+}
+
+export interface CategorySummary {
+  category_id: string;
+  category_name: string;
+  category_color: string;
+  type: string;
+  total: number;
+}
+
+export interface MonthlySummary {
+  month: number;
+  year: number;
+  total_income: number;
+  total_expense: number;
+  balance: number;
+  by_category: CategorySummary[];
+}
+
+export interface MonthlyTotals {
+  month: number;
+  total_income: number;
+  total_expense: number;
+  balance: number;
+}
+
+export interface YearlySummary {
+  year: number;
+  total_income: number;
+  total_expense: number;
+  balance: number;
+  monthly: MonthlyTotals[];
+}

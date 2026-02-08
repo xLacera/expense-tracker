@@ -1,0 +1,36 @@
+# ============================================
+# Dockerfile de PRODUCCIÓN para el backend Go
+# Build multi-stage: compila el binario y lo copia a una imagen mínima.
+# Resultado: imagen de ~15MB en vez de ~1GB
+# ============================================
+
+# --- Etapa 1: Compilar el código Go ---
+FROM golang:1.24-alpine AS builder
+
+WORKDIR /app
+
+# Copiar dependencias primero (cache de Docker)
+COPY go.mod go.sum ./
+RUN go mod download
+
+# Copiar todo el código fuente
+COPY . .
+
+# Compilar el binario estático (sin dependencias de C)
+RUN CGO_ENABLED=0 GOOS=linux go build -o server ./cmd/server/main.go
+
+# --- Etapa 2: Imagen final mínima ---
+FROM alpine:3.19
+
+# Certificados SSL necesarios para conectar a Neon.tech (PostgreSQL con SSL)
+RUN apk add --no-cache ca-certificates
+
+WORKDIR /app
+
+# Copiar solo el binario compilado y las migraciones
+COPY --from=builder /app/server .
+COPY --from=builder /app/migrations ./migrations
+
+EXPOSE 8080
+
+CMD ["./server"]

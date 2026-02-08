@@ -1,0 +1,43 @@
+/* Tailwind CSS v4 - importación principal */
+@import "tailwindcss";
+
+/* Configuración de dark mode con selector de clase */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ============================================
+   DESIGN SYSTEM: SaaS Dashboard (shadcn/ui)
+   Clean, professional, product-focused
+   ============================================ */
+
+/* --- Base --- */
+body {
+  font-family:
+    "Inter",
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    sans-serif;
+  margin: 0;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* --- Scrollbar minimalista --- */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 3px;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #374151;
+}

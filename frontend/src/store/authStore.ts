@@ -18,6 +18,8 @@ interface AuthState {
   register: (email: string, password: string, name: string) => Promise<void>;
   logout: () => void;
   clearError: () => void;
+  /** Actualiza la preferencia include_savings_in_total en estado y localStorage */
+  setIncludeSavingsInTotal: (value: boolean) => void;
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
@@ -78,4 +80,13 @@ export const useAuthStore = create<AuthState>((set) => ({
   },
 
   clearError: () => set({ error: null }),
+
+  setIncludeSavingsInTotal: (value) => {
+    set((state) => {
+      if (!state.user) return state;
+      const updated = { ...state.user, include_savings_in_total: value };
+      localStorage.setItem("user", JSON.stringify(updated));
+      return { user: updated };
+    });
+  },
 }));

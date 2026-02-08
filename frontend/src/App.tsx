@@ -1,9 +1,9 @@
 // App.tsx - Punto de entrada de la app React.
 // Aquí definimos TODAS las rutas y conectamos los componentes.
 
+import { useEffect } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
-import { useEffect } from "react";
 import { useThemeStore } from "./store/themeStore";
 
 // Páginas

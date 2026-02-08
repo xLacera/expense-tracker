@@ -5,8 +5,18 @@ export interface User {
   id: string;
   email: string;
   name: string;
+  /** Si true, los ahorros se suman al "Tu dinero total" del dashboard. Por defecto true. */
+  include_savings_in_total?: boolean;
   created_at: string;
   updated_at: string;
+}
+
+export interface UserSettingsResponse {
+  include_savings_in_total: boolean;
+}
+
+export interface UpdateUserSettingsRequest {
+  include_savings_in_total: boolean;
 }
 
 export interface AuthResponse {

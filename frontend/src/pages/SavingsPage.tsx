@@ -12,28 +12,44 @@ import {
   PiggyBank,
 } from "lucide-react";
 import { savingsAPI } from "../api/savings";
-import type {
-  SavingsAccount,
-  CreateSavingsAccountRequest,
-} from "../types";
+import { userAPI } from "../api/user";
+import { useAuthStore } from "../store/authStore";
+import type { SavingsAccount, CreateSavingsAccountRequest } from "../types";
 import { formatCOP } from "../utils/format";
 import { getEmoji, SAVINGS_EMOJI_OPTIONS } from "../utils/emojis";
 import MoneyInput from "../components/MoneyInput";
 import toast from "react-hot-toast";
 
 const PRESET_COLORS = [
-  "#ef4444", "#f97316", "#f59e0b", "#84cc16", "#22c55e",
-  "#06b6d4", "#3b82f6", "#6366f1", "#8b5cf6", "#ec4899",
+  "#ef4444",
+  "#f97316",
+  "#f59e0b",
+  "#84cc16",
+  "#22c55e",
+  "#06b6d4",
+  "#3b82f6",
+  "#6366f1",
+  "#8b5cf6",
+  "#ec4899",
 ];
 
 export default function SavingsPage() {
+  const user = useAuthStore((s) => s.user);
+  const setIncludeSavingsInTotal = useAuthStore(
+    (s) => s.setIncludeSavingsInTotal,
+  );
+  const includeInTotal = user?.include_savings_in_total !== false; // default true para usuarios antiguos
+
   const [accounts, setAccounts] = useState<SavingsAccount[]>([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [updatingSetting, setUpdatingSetting] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [showAdjust, setShowAdjust] = useState<string | null>(null);
-  const [adjustType, setAdjustType] = useState<"deposit" | "withdraw">("deposit");
+  const [adjustType, setAdjustType] = useState<"deposit" | "withdraw">(
+    "deposit",
+  );
   const [adjustAmount, setAdjustAmount] = useState(0);
 
   const [form, setForm] = useState<CreateSavingsAccountRequest>({
@@ -116,7 +132,9 @@ export default function SavingsPage() {
         amount: adjustAmount,
         type: adjustType,
       });
-      toast.success(adjustType === "deposit" ? "Depósito realizado" : "Retiro realizado");
+      toast.success(
+        adjustType === "deposit" ? "Depósito realizado" : "Retiro realizado",
+      );
       setShowAdjust(null);
       setAdjustAmount(0);
       loadData();
@@ -126,7 +144,13 @@ export default function SavingsPage() {
   };
 
   const resetForm = () => {
-    setForm({ name: "", balance: 0, color: "#6366f1", icon: "banco", notes: "" });
+    setForm({
+      name: "",
+      balance: 0,
+      color: "#6366f1",
+      icon: "banco",
+      notes: "",
+    });
   };
 
   const adjustAccount = accounts.find((a) => a.id === showAdjust);
@@ -166,8 +190,59 @@ export default function SavingsPage() {
           </div>
         </div>
         <p className="text-xs text-gray-400 dark:text-gray-500">
-          {accounts.length} {accounts.length === 1 ? "cuenta" : "cuentas"} de ahorro
+          {accounts.length} {accounts.length === 1 ? "cuenta" : "cuentas"} de
+          ahorro
         </p>
+
+        {/* Toggle: incluir ahorros en dinero total */}
+        <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-800 flex items-center justify-between gap-3">
+          <div>
+            <p className="text-sm font-medium text-gray-900 dark:text-white">
+              Incluir ahorros en mi dinero total
+            </p>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+              Si está activo, este total se suma al resumen del inicio
+              (dashboard).
+            </p>
+          </div>
+          <button
+            type="button"
+            role="switch"
+            aria-checked={includeInTotal}
+            disabled={updatingSetting}
+            onClick={async () => {
+              const newValue = !includeInTotal;
+              setUpdatingSetting(true);
+              try {
+                await userAPI.updateSettings({
+                  include_savings_in_total: newValue,
+                });
+                setIncludeSavingsInTotal(newValue);
+                toast.success(
+                  newValue
+                    ? "Ahorros visibles en tu resumen"
+                    : "Ahorros solo en esta sección",
+                );
+              } catch {
+                toast.error("Error al guardar preferencia");
+              } finally {
+                setUpdatingSetting(false);
+              }
+            }}
+            className={`relative inline-flex h-6 w-11 shrink-0 rounded-full border border-gray-200 dark:border-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-900 dark:focus:ring-gray-300 focus:ring-offset-2 disabled:opacity-50 ${
+              includeInTotal
+                ? "bg-gray-900 dark:bg-white"
+                : "bg-gray-200 dark:bg-gray-700"
+            }`}
+          >
+            <span
+              className={`pointer-events-none inline-block h-5 w-5 rounded-full bg-white dark:bg-gray-900 shadow ring-0 transition-transform ${
+                includeInTotal ? "translate-x-5" : "translate-x-0.5"
+              }`}
+              style={{ marginTop: 2 }}
+            />
+          </button>
+        </div>
       </div>
 
       {/* Modal crear/editar cuenta */}
@@ -347,11 +422,12 @@ export default function SavingsPage() {
                 />
               </div>
 
-              {adjustType === "withdraw" && adjustAmount > adjustAccount.balance && (
-                <p className="text-xs text-red-500">
-                  No tienes suficiente balance para este retiro
-                </p>
-              )}
+              {adjustType === "withdraw" &&
+                adjustAmount > adjustAccount.balance && (
+                  <p className="text-xs text-red-500">
+                    No tienes suficiente balance para este retiro
+                  </p>
+                )}
 
               <div className="flex gap-2 pt-1">
                 <button
@@ -366,7 +442,11 @@ export default function SavingsPage() {
                 </button>
                 <button
                   type="submit"
-                  disabled={adjustAmount <= 0 || (adjustType === "withdraw" && adjustAmount > adjustAccount.balance)}
+                  disabled={
+                    adjustAmount <= 0 ||
+                    (adjustType === "withdraw" &&
+                      adjustAmount > adjustAccount.balance)
+                  }
                   className={`flex-1 py-2 px-4 text-sm font-medium rounded-md transition-colors disabled:opacity-50 ${
                     adjustType === "deposit"
                       ? "bg-green-600 text-white hover:bg-green-700"
@@ -383,7 +463,9 @@ export default function SavingsPage() {
 
       {/* Lista de cuentas */}
       {loading ? (
-        <div className="text-center text-sm text-gray-400 py-8">Cargando...</div>
+        <div className="text-center text-sm text-gray-400 py-8">
+          Cargando...
+        </div>
       ) : accounts.length === 0 ? (
         <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 p-8 text-center">
           <PiggyBank className="w-10 h-10 text-gray-300 dark:text-gray-600 mx-auto mb-3" />

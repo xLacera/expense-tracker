@@ -4,6 +4,7 @@
 package handlers
 
 import (
+	"log"
 	"net/http"
 
 	"expense-tracker-backend/internal/models"
@@ -106,9 +107,12 @@ func (h *AuthHandler) ForgotPassword(c *gin.Context) {
 
 	err := h.authService.ForgotPassword(c.Request.Context(), req)
 	if err != nil {
+		// Log el error real para depuración (Render, logs del servidor)
+		log.Printf("[ForgotPassword] error enviando OTP a %s: %v", req.Email, err)
+		// Mensaje genérico al usuario (no exponer detalles internos ni Resend)
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error":   "error_envio",
-			"message": err.Error(),
+			"message": "No pudimos enviar el código por correo. El servicio de email puede no estar configurado; intenta más tarde o contacta al administrador.",
 		})
 		return
 	}

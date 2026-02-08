@@ -19,6 +19,10 @@ export const CATEGORY_EMOJIS: Record<string, string> = {
   regalos: "🎁",
   comunicaciones: "📱",
   suscripciones: "📺",
+  mascotas: "🐾",
+  ocio: "🎮",
+  maquillaje: "💄",
+  skincare: "✨",
   // Ingresos
   salario: "💰",
   deposito: "🏦",
@@ -60,6 +64,10 @@ export const EXPENSE_EMOJI_OPTIONS = [
   { key: "regalos", emoji: "🎁", label: "Regalos" },
   { key: "comunicaciones", emoji: "📱", label: "Comunicaciones" },
   { key: "suscripciones", emoji: "📺", label: "Suscripciones" },
+  { key: "mascotas", emoji: "🐾", label: "Mascotas" },
+  { key: "ocio", emoji: "🎮", label: "Ocio" },
+  { key: "maquillaje", emoji: "💄", label: "Maquillaje" },
+  { key: "skincare", emoji: "✨", label: "Skincare" },
   { key: "otros", emoji: "📌", label: "Otros" },
 ];
 

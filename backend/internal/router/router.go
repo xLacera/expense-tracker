@@ -55,6 +55,7 @@ func Setup(pool *pgxpool.Pool, jwtSecret string, corsOrigin string, resendAPIKey
 
 	// --- Crear handlers ---
 	authHandler := handlers.NewAuthHandler(authService)
+	userHandler := handlers.NewUserHandler(userRepo)
 	categoryHandler := handlers.NewCategoryHandler(categoryService)
 	transactionHandler := handlers.NewTransactionHandler(transactionService)
 	budgetHandler := handlers.NewBudgetHandler(budgetService)
@@ -88,6 +89,13 @@ func Setup(pool *pgxpool.Pool, jwtSecret string, corsOrigin string, resendAPIKey
 	protected := api.Group("")
 	protected.Use(middleware.AuthMiddleware(jwtSecret))
 	{
+		// Preferencias del usuario
+		user := protected.Group("/user")
+		{
+			user.GET("/settings", userHandler.GetSettings)
+			user.PATCH("/settings", userHandler.UpdateSettings)
+		}
+
 		// Categorías
 		categories := protected.Group("/categories")
 		{

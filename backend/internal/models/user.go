@@ -7,12 +7,13 @@ import "time"
 
 // User representa un usuario registrado en la aplicación.
 type User struct {
-	ID           string    `json:"id"`
-	Email        string    `json:"email"`
-	PasswordHash string    `json:"-"` // El "-" hace que NUNCA se envíe en respuestas JSON
-	Name         string    `json:"name"`
-	CreatedAt    time.Time `json:"created_at"`
-	UpdatedAt    time.Time `json:"updated_at"`
+	ID                     string    `json:"id"`
+	Email                  string    `json:"email"`
+	PasswordHash           string    `json:"-"` // El "-" hace que NUNCA se envíe en respuestas JSON
+	Name                   string    `json:"name"`
+	IncludeSavingsInTotal  bool      `json:"include_savings_in_total"` // Si true, ahorros se muestran en el dinero total del dashboard
+	CreatedAt              time.Time `json:"created_at"`
+	UpdatedAt              time.Time `json:"updated_at"`
 }
 
 // RegisterRequest es lo que el frontend envía para registrarse.
@@ -44,6 +45,16 @@ type ResetPasswordRequest struct {
 	Email       string `json:"email" binding:"required,email"`
 	OTP         string `json:"otp" binding:"required,len=6"`
 	NewPassword string `json:"new_password" binding:"required,min=6"`
+}
+
+// UserSettingsResponse es la respuesta de GET /api/user/settings.
+type UserSettingsResponse struct {
+	IncludeSavingsInTotal bool `json:"include_savings_in_total"`
+}
+
+// UpdateUserSettingsRequest es el body de PATCH /api/user/settings.
+type UpdateUserSettingsRequest struct {
+	IncludeSavingsInTotal *bool `json:"include_savings_in_total"` // puntero para distinguir "no enviado" de false
 }
 
 // PasswordReset representa un registro de OTP en la tabla password_resets.

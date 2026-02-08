@@ -30,9 +30,9 @@ func (r *UserRepository) Create(ctx context.Context, email, passwordHash, name s
 	err := r.pool.QueryRow(ctx,
 		`INSERT INTO users (email, password_hash, name)
 		 VALUES ($1, $2, $3)
-		 RETURNING id, email, password_hash, name, created_at, updated_at`,
+		 RETURNING id, email, password_hash, name, include_savings_in_total, created_at, updated_at`,
 		email, passwordHash, name,
-	).Scan(&user.ID, &user.Email, &user.PasswordHash, &user.Name, &user.CreatedAt, &user.UpdatedAt)
+	).Scan(&user.ID, &user.Email, &user.PasswordHash, &user.Name, &user.IncludeSavingsInTotal, &user.CreatedAt, &user.UpdatedAt)
 
 	if err != nil {
 		return nil, fmt.Errorf("error creando usuario: %w", err)
@@ -45,10 +45,10 @@ func (r *UserRepository) Create(ctx context.Context, email, passwordHash, name s
 func (r *UserRepository) GetByEmail(ctx context.Context, email string) (*models.User, error) {
 	user := &models.User{}
 	err := r.pool.QueryRow(ctx,
-		`SELECT id, email, password_hash, name, created_at, updated_at
+		`SELECT id, email, password_hash, name, COALESCE(include_savings_in_total, true), created_at, updated_at
 		 FROM users WHERE email = $1`,
 		email,
-	).Scan(&user.ID, &user.Email, &user.PasswordHash, &user.Name, &user.CreatedAt, &user.UpdatedAt)
+	).Scan(&user.ID, &user.Email, &user.PasswordHash, &user.Name, &user.IncludeSavingsInTotal, &user.CreatedAt, &user.UpdatedAt)
 
 	if err != nil {
 		return nil, fmt.Errorf("usuario no encontrado: %w", err)
@@ -61,10 +61,10 @@ func (r *UserRepository) GetByEmail(ctx context.Context, email string) (*models.
 func (r *UserRepository) GetByID(ctx context.Context, id string) (*models.User, error) {
 	user := &models.User{}
 	err := r.pool.QueryRow(ctx,
-		`SELECT id, email, password_hash, name, created_at, updated_at
+		`SELECT id, email, password_hash, name, COALESCE(include_savings_in_total, true), created_at, updated_at
 		 FROM users WHERE id = $1`,
 		id,
-	).Scan(&user.ID, &user.Email, &user.PasswordHash, &user.Name, &user.CreatedAt, &user.UpdatedAt)
+	).Scan(&user.ID, &user.Email, &user.PasswordHash, &user.Name, &user.IncludeSavingsInTotal, &user.CreatedAt, &user.UpdatedAt)
 
 	if err != nil {
 		return nil, fmt.Errorf("usuario no encontrado: %w", err)
@@ -81,6 +81,18 @@ func (r *UserRepository) UpdatePassword(ctx context.Context, userID, newPassword
 	)
 	if err != nil {
 		return fmt.Errorf("error actualizando contraseña: %w", err)
+	}
+	return nil
+}
+
+// UpdateIncludeSavingsInTotal actualiza la preferencia de incluir ahorros en el dinero total.
+func (r *UserRepository) UpdateIncludeSavingsInTotal(ctx context.Context, userID string, value bool) error {
+	_, err := r.pool.Exec(ctx,
+		`UPDATE users SET include_savings_in_total = $1, updated_at = NOW() WHERE id = $2`,
+		value, userID,
+	)
+	if err != nil {
+		return fmt.Errorf("error actualizando preferencia: %w", err)
 	}
 	return nil
 }

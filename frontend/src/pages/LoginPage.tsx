@@ -44,11 +44,17 @@ export default function LoginPage() {
           setError(message || "No hay una cuenta registrada con este correo.");
         } else if (status === 401) {
           // Contraseña incorrecta
-          setError(message || "Contraseña incorrecta. Verifica e intenta de nuevo.");
+          setError(
+            message || "Contraseña incorrecta. Verifica e intenta de nuevo.",
+          );
         } else if (status === 400) {
-          setError(message || "Datos inválidos. Revisa el formato de tu email.");
+          setError(
+            message || "Datos inválidos. Revisa el formato de tu email.",
+          );
         } else if (!err.response) {
-          setError("No se puede conectar al servidor. Intenta de nuevo en unos segundos.");
+          setError(
+            "No se puede conectar al servidor. Intenta de nuevo en unos segundos.",
+          );
         } else {
           setError(message || "Error inesperado. Intenta de nuevo.");
         }
@@ -79,11 +85,24 @@ export default function LoginPage() {
           onSubmit={handleSubmit}
           className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 shadow-sm p-6 space-y-4"
         >
-          {/* Error message inline */}
+          {/* Error message inline — se mantiene hasta que vuelvas a enviar el formulario */}
           {error && (
             <div className="flex items-start gap-2 p-3 rounded-md bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800">
               <AlertCircle className="w-4 h-4 text-red-500 dark:text-red-400 mt-0.5 shrink-0" />
-              <p className="text-sm text-red-700 dark:text-red-400">{error}</p>
+              <div className="min-w-0 flex-1">
+                <p className="text-sm text-red-700 dark:text-red-400">
+                  {error}
+                </p>
+                <p className="text-xs text-red-600 dark:text-red-500 mt-1.5">
+                  ¿Olvidaste tu contraseña?{" "}
+                  <Link
+                    to="/forgot-password"
+                    className="font-medium underline hover:no-underline"
+                  >
+                    Restablécela aquí
+                  </Link>
+                </p>
+              </div>
             </div>
           )}
 

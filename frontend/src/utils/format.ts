@@ -12,12 +12,23 @@ export function formatCOP(amount: number): string {
   }).format(amount);
 }
 
-// Formatea una fecha ISO a formato colombiano: "7 de feb. de 2026"
+// Formato latinoamericano: día / mes / año (ej. 7 feb. 2026)
 export function formatDate(dateString: string): string {
   const date = new Date(dateString + "T12:00:00"); // Evitar problemas de timezone
   return new Intl.DateTimeFormat("es-CO", {
     day: "numeric",
     month: "short",
+    year: "numeric",
+    timeZone: "America/Bogota",
+  }).format(date);
+}
+
+// Formato corto numérico latinoamericano: DD/MM/YYYY (ej. 07/02/2026)
+export function formatDateShort(dateString: string): string {
+  const date = new Date(dateString + "T12:00:00");
+  return new Intl.DateTimeFormat("es-CO", {
+    day: "2-digit",
+    month: "2-digit",
     year: "numeric",
     timeZone: "America/Bogota",
   }).format(date);

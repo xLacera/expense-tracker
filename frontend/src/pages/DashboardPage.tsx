@@ -3,13 +3,21 @@
 
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { TrendingUp, TrendingDown, Scale, ArrowRight } from "lucide-react";
+import {
+  TrendingUp,
+  TrendingDown,
+  Scale,
+  ArrowRight,
+  Wallet,
+} from "lucide-react";
 import { reportsAPI } from "../api/reports";
 import { transactionsAPI } from "../api/transactions";
+import { savingsAPI } from "../api/savings";
+import { useAuthStore } from "../store/authStore";
 import type { MonthlySummary, Transaction } from "../types";
 import {
   formatCOP,
-  formatDate,
+  formatDateShort,
   formatMonthYear,
   getCurrentPeriod,
 } from "../utils/format";
@@ -17,7 +25,11 @@ import { getEmoji } from "../utils/emojis";
 import toast from "react-hot-toast";
 
 export default function DashboardPage() {
+  const user = useAuthStore((s) => s.user);
+  const includeSavingsInTotal = user?.include_savings_in_total !== false;
+
   const [summary, setSummary] = useState<MonthlySummary | null>(null);
+  const [savingsTotal, setSavingsTotal] = useState(0);
   const [recentTransactions, setRecentTransactions] = useState<Transaction[]>(
     [],
   );
@@ -26,16 +38,21 @@ export default function DashboardPage() {
 
   useEffect(() => {
     loadData();
-  }, []);
+  }, [includeSavingsInTotal]);
 
   const loadData = async () => {
     try {
-      const [summaryData, transactionsData] = await Promise.all([
+      setLoading(true);
+      const [summaryData, transactionsData, savingsData] = await Promise.all([
         reportsAPI.getMonthly(month, year),
         transactionsAPI.getAll({ limit: 5 }),
+        includeSavingsInTotal
+          ? savingsAPI.getAll()
+          : Promise.resolve({ total: 0 }),
       ]);
       setSummary(summaryData);
       setRecentTransactions(transactionsData.transactions);
+      setSavingsTotal(savingsData?.total ?? 0);
     } catch {
       toast.error("Error cargando datos del panel");
     } finally {
@@ -47,8 +64,8 @@ export default function DashboardPage() {
     return (
       <div className="space-y-6 animate-pulse">
         <div className="h-6 bg-gray-200 dark:bg-gray-800 rounded w-48" />
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {[1, 2, 3].map((i) => (
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          {[1, 2, 3, 4].map((i) => (
             <div
               key={i}
               className="h-28 bg-gray-200 dark:bg-gray-800 rounded-lg"
@@ -69,7 +86,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Tarjetas de resumen */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Ingresos */}
         <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 p-4 sm:p-5">
           <div className="flex items-center justify-between mb-3">
@@ -120,6 +137,32 @@ export default function DashboardPage() {
             {formatCOP(summary?.balance || 0)}
           </p>
         </div>
+
+        {/* Tu dinero total (balance + ahorros si el usuario lo tiene activado) */}
+        <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 p-4 sm:p-5">
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-sm font-medium text-gray-500 dark:text-gray-400">
+              Tu dinero total
+            </span>
+            <div className="w-8 h-8 bg-indigo-50 dark:bg-indigo-950/40 rounded-md flex items-center justify-center">
+              <Wallet className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+            </div>
+          </div>
+          <p
+            className={`text-xl sm:text-2xl font-semibold truncate ${
+              (summary?.balance ?? 0) + savingsTotal >= 0
+                ? "text-green-600 dark:text-green-400"
+                : "text-red-600 dark:text-red-400"
+            }`}
+          >
+            {formatCOP((summary?.balance ?? 0) + savingsTotal)}
+          </p>
+          {includeSavingsInTotal && savingsTotal > 0 && (
+            <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
+              Incluye ahorros
+            </p>
+          )}
+        </div>
       </div>
 
       {/* Últimas transacciones */}
@@ -166,7 +209,7 @@ export default function DashboardPage() {
                       {t.description || t.category_name}
                     </p>
                     <p className="text-xs text-gray-400 dark:text-gray-500">
-                      {t.category_name} · {formatDate(t.date)}
+                      {t.category_name} · {formatDateShort(t.date)}
                     </p>
                   </div>
                 </div>

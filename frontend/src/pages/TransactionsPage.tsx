@@ -20,7 +20,7 @@ import type {
 } from "../types";
 import {
   formatCOP,
-  formatDate,
+  formatDateShort,
   formatMonthYear,
   getTodayBogota,
   getCurrentPeriod,
@@ -457,7 +457,7 @@ export default function TransactionsPage() {
                       {t.description || t.category_name}
                     </p>
                     <p className="text-xs text-gray-400 dark:text-gray-500 truncate">
-                      {t.category_name} · {formatDate(t.date)}
+                      {t.category_name} · {formatDateShort(t.date)}
                     </p>
                   </div>
                 </div>

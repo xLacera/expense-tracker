@@ -44,6 +44,10 @@ var defaultCategories = []struct {
 	{"Regalos", "#f43f5e", "regalos", "expense"},
 	{"Comunicaciones", "#6366f1", "comunicaciones", "expense"},
 	{"Suscripciones", "#7c3aed", "suscripciones", "expense"},
+	{"Mascotas", "#eab308", "mascotas", "expense"},
+	{"Ocio", "#14b8a6", "ocio", "expense"},
+	{"Maquillaje", "#f472b6", "maquillaje", "expense"},
+	{"Skincare", "#a78bfa", "skincare", "expense"},
 	// Ingresos
 	{"Salario", "#22c55e", "salario", "income"},
 	{"Depósito", "#0ea5e9", "deposito", "income"},
